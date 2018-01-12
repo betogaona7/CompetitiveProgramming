@@ -3,6 +3,16 @@
 
 using namespace std;
 
+int todecimal(long long n){
+	int factor = 1, total = 0;
+	while(n != 0){
+		total += (n%10)*factor;
+		n /= 10;
+		factor *= 2;
+	}
+	return total;
+}
+
 long long int fibonacci(int n){
 	long long int current = 0, previous = 0, after = 1;
 	for (int i = 0; i < n; i++){
@@ -13,21 +23,22 @@ long long int fibonacci(int n){
 	return previous;
 }
 
+
 int main() {
 	int n;
 	cin >> n;
 	while(n  > 0){
-		n -= 1;
-		string binary;
+		long long  binary;
 		cin >> binary;
-		long long int n = stoll(binary, 0, 2);
-		if(n < 7){
-			cout << "00" << fibonacci(n) << "\n";
-		}else if (n < 11){
-			cout << "0" << fibonacci(n) << "\n";
+		int decNum = todecimal(binary);
+		if(decNum < 7){
+			cout << "00" << fibonacci(decNum) << "\n";
+		}else if (decNum < 11){
+			cout << "0" << fibonacci(decNum) << "\n";
 		}else{
-			cout << fibonacci(n) << "\n";
+			cout << fibonacci(decNum) << "\n";
 		}
+		n -= 1;
 	}
 	return 0;
 }
