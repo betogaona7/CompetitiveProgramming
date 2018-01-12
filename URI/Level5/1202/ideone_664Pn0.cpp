@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string> 
+#include <stdio.h>
 
 using namespace std;
 
@@ -20,25 +21,23 @@ long long int fibonacci(int n){
 		previous = after;
 		after = current;
 	}
-	return previous;
+	
+	if(n < 7){
+		printf("00%lld\n", previous);
+	}else if (n < 11){
+		printf("0%lld\n", previous);
+	}else{
+		printf("%lld\n", previous);
+	}
 }
-
 
 int main() {
 	int n;
-	cin >> n;
-	while(n  > 0){
-		long long  binary;
-		cin >> binary;
-		int decNum = todecimal(binary);
-		if(decNum < 7){
-			cout << "00" << fibonacci(decNum) << "\n";
-		}else if (decNum < 11){
-			cout << "0" << fibonacci(decNum) << "\n";
-		}else{
-			cout << fibonacci(decNum) << "\n";
-		}
-		n -= 1;
+	scanf("%d", &n);
+	for(int i = 0; i < n;  i++){
+		long long binary;
+		scanf("%lld", &binary);
+		fibonacci(todecimal(binary));
 	}
 	return 0;
 }
