@@ -1,22 +1,18 @@
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 using namespace std;
 
 int main() {
 	int n;
 	scanf("%d", &n);
-	for(int i = 0; i < n; i++){
-		long int warriors;
-		long int rows = 0;
+	for(int i = 1; i <= n; i++){
+		long long int warriors, row;
 		
-		scanf("%ld", &warriors);
-		while(warriors >= 0){
-			rows += 1;
-			warriors -= rows;
-		}
-		printf("%ld\n", rows-1);
-		
+		scanf("%lld", &warriors);
+		row = (-1 + sqrt(1+(warriors*8)))/2;
+		printf("%lld\n", row);
 	}
 	return 0;
 }
