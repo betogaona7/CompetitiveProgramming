@@ -1,7 +1,18 @@
 #include <iostream>
 #include <string> 
+#include <stdio.h>
 
 using namespace std;
+
+int todecimal(long long n){
+	int factor = 1, total = 0;
+	while(n != 0){
+		total += (n%10)*factor;
+		n /= 10;
+		factor *= 2;
+	}
+	return total;
+}
 
 long long int fibonacci(int n){
 	long long int current = 0, previous = 0, after = 1;
@@ -10,24 +21,23 @@ long long int fibonacci(int n){
 		previous = after;
 		after = current;
 	}
-	return previous;
+	
+	if(n < 7){
+		printf("00%lld\n", previous);
+	}else if (n < 11){
+		printf("0%lld\n", previous);
+	}else{
+		printf("%lld\n", previous);
+	}
 }
 
 int main() {
 	int n;
-	cin >> n;
-	while(n  > 0){
-		n -= 1;
-		string binary;
-		cin >> binary;
-		long long int n = stoll(binary, 0, 2);
-		if(n < 7){
-			cout << "00" << fibonacci(n) << "\n";
-		}else if (n < 11){
-			cout << "0" << fibonacci(n) << "\n";
-		}else{
-			cout << fibonacci(n) << "\n";
-		}
+	scanf("%d", &n);
+	for(int i = 0; i < n;  i++){
+		long long binary;
+		scanf("%lld", &binary);
+		fibonacci(todecimal(binary));
 	}
 	return 0;
 }
