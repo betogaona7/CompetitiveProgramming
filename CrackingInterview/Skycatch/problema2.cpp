@@ -28,40 +28,33 @@ vector <string> movements(string value){
 
 int main() {
     unordered_map <string, int> visited;
-    // Test case (Modify to read it as a program input) ***
-    vector <string> grid {"0000000011",
-                          "0000000100",
-                          "1100000110",
-                          "1000100000",
-                          "0000000000",
-                          "0001001000",
-                          "1111111111",
-                          "1000000011",
-                          "0000000000",
-                          "0111100000"};
     
-    // Modify to read a file ***
-    int rows = 10; 
-    int cols = 10;
-    int limit = stoi(to_string(rows-1) + to_string(cols-1));
-    int dx = 7; 
-    int dy = 5;
-    int bx = 6;
-    int by = 7;
-
-    string start = to_string(dy) + to_string(dx);
-    string end = to_string(by) + to_string(bx);
-
-    for(int i = 0; i < rows; i++){
+    int rows, cols, dx, dy, bx, by, limit, i;
+    string start, end, row; 
+    
+    cin >> rows >> cols;
+    cin >> dx >> dy;
+    cin >> bx >> by;
+    
+    limit = stoi(to_string(rows-1) + to_string(cols-1));
+    start = to_string(dy) + to_string(dx);
+    end = to_string(by) + to_string(bx);
+    
+    cin.ignore(256, '\n'); 
+    
+    // Build the map
+    i = 0;
+    while(i < rows){
+        getline(cin, row);
         for(int j = 0; j < cols; j++){
             int value = 0;
-            if(grid[i][j] == '1'){
+            if(row[j] == '1'){
                 value = 1;
             }
             visited.insert(make_pair(to_string(i)+to_string(j), value));
         }
+        i += 1;
     }
-
 
     stack < string > nodes;  
     queue < string > nodesq;
@@ -85,11 +78,11 @@ int main() {
     while(nodes.top() != end){
         vector <string> actions = movements(nodesq.front());
         for(int i = 0; i < 4; i++){
-			int row = int(actions[i][0]) - 48;
-			int col = int(actions[i][1]) - 48;
-			if(row >= 0 && col >= 0 && stoi(actions[i]) <= limit){
+            int row = int(actions[i][0]) - 48;
+            int col = int(actions[i][1]) - 48;
+            if(row >= 0 && col >= 0 && stoi(actions[i]) <= limit){
                 if(visited[actions[i]] != 1){
-                	nodes.push(actions[i]);
+                    nodes.push(actions[i]);
                     nodesq.push(actions[i]);
                     visited[actions[i]] = 1;
                 }
@@ -114,13 +107,13 @@ int main() {
     nodes.pop();
 
     while(!nodes.empty()){
-    	if(binary_search(actions.begin(), actions.end(), nodes.top())){
-    		path.push(nodes.top());
-    		actions = movements(nodes.top());
-    		nodes.pop();
-    	}else{
-    		nodes.pop();
-    	}
+        if(binary_search(actions.begin(), actions.end(), nodes.top())){
+            path.push(nodes.top());
+            actions = movements(nodes.top());
+            nodes.pop();
+        }else{
+            nodes.pop();
+        }
     }
     
     // Print number of steps to reach the battery. 
@@ -130,18 +123,18 @@ int main() {
     int src = stoi(path.top());
     path.pop();
     while(!path.empty()){
-    	int dst = stoi(path.top());
-    	switch(src-dst){
-    		case 10: cout << "UP" << endl;
-    			break;
-    		case 1: cout << "LEFT" << endl;
-    			break;
-    		case -1: cout << "RIGHT" << endl;
-    			break;
-    		case -10: cout << "DOWN" << endl;
-    	}
-    	src = dst;
-    	path.pop();
+        int dst = stoi(path.top());
+        switch(src-dst){
+            case 10: cout << "UP" << endl;
+                break;
+            case 1: cout << "LEFT" << endl;
+                break;
+            case -1: cout << "RIGHT" << endl;
+                break;
+            case -10: cout << "DOWN" << endl;
+        }
+        src = dst;
+        path.pop();
     }
     // If the drone is where the battery is, then just grab. 
     cout << "GRAB" << endl;

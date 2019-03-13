@@ -32,28 +32,23 @@ bool isAdjacent(string actual, string element){
 int main() {
     unordered_map <string, vector<string> > mines;
     queue <string> rocks;
-    // Test case (Modify to read it as a program input) ***
-    vector <string> grid {"0000000011",
-                          "0000000100",
-                          "1100000110",
-                          "1000100000",
-                          "0000000000",
-                          "0001001000",
-                          "0100000111",
-                          "1000000011",
-                          "0000000000",
-                          "0111100000"};
     
-    // Modify to read a file ***
-    int rows = 10;
-    int cols = 10;
-
-    for(int i = 0; i < rows; i++){
+    int rows, cols, i;
+    string row;
+    
+    cin >> rows >> cols;
+    cin.ignore(256, '\n'); 
+    
+    // Get the locations of where there is gold.
+    i = 0;
+    while(i < rows){
+        getline(cin, row);
         for(int j = 0; j < cols; j++){
-            if(grid[i][j] == '1'){
+            if(row[j] == '1'){
                 rocks.push(to_string(i)+to_string(j));
             }
         }
+        i += 1;
     }
     
     // If there are no golden rocks, there are no golden mines.
