@@ -8,36 +8,52 @@
 
 using namespace std;
 
-vector <string> pactions(string value){
+vector <string> movements(string value){
+    /* 
+    Returns a sorted vector of allowed postions to move.
+        value: 
+            Value of the current position
+    */
     int row = int(value[0]) - 48;
     int col = int(value[1]) - 48;
-    
+
     string down = to_string(row-1) + value[1];
     string left = value[0] + to_string(col-1);
     string right =value[0] + to_string(col+1); 
     string top = to_string(row+1) + value[1];
 
-    vector <string> a {down, left, right, top};
-    return a;
+    vector <string> m {down, left, right, top};
+    return m;
 }
 
 int main() {
-
     unordered_map <string, int> visited;
+    // Test case (Modify to read it as a program input) ***
     vector <string> grid {"0000000011",
                           "0000000100",
                           "1100000110",
                           "1000100000",
                           "0000000000",
                           "0001001000",
-                          "0100000111",
+                          "1111111111",
                           "1000000011",
                           "0000000000",
                           "0111100000"};
     
-    // Get valid indices  O(n2)
-    for(int i = 0; i < grid.size(); i++){
-        for(int j = 0; j < grid[i].size(); j++){
+    // Modify to read a file ***
+    int rows = 10; 
+    int cols = 10;
+    int limit = stoi(to_string(rows-1) + to_string(cols-1));
+    int dx = 7; 
+    int dy = 5;
+    int bx = 6;
+    int by = 7;
+
+    string start = to_string(dy) + to_string(dx);
+    string end = to_string(by) + to_string(bx);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
             int value = 0;
             if(grid[i][j] == '1'){
                 value = 1;
@@ -45,22 +61,29 @@ int main() {
             visited.insert(make_pair(to_string(i)+to_string(j), value));
         }
     }
-    int rows = 10; // x
-    int cols = 10; // y
-    int limit = stoi(to_string(rows-1) + to_string(cols-1));
-    string start = "57";
-    string end = "76";
+
 
     stack < string > nodes;  
     queue < string > nodesq;
     
+    // If the drone is already where the battery is, then why to move?
+    if(start == end){
+        cout << 0 << endl;
+        cout << "GRAB" << endl;
+        return 0;
+    }else if(stoi(end) > limit || bx < 0 || by < 0){ // If the battery isn't on valid coordinates, then the drone will need a human.
+        cout << -1 << endl;
+        return 0;
+    }
+
+    // If the battery has valid coordinates and the drone isn't already there, then calculate the shortest path.
     nodes.push(start);
     nodesq.push(start);
     visited[start] = 1;
 
-    // build the tree
+    // Build an ordered tree with the possible paths until finding the goal.
     while(nodes.top() != end){
-        vector <string> actions = pactions(nodesq.front());
+        vector <string> actions = movements(nodesq.front());
         for(int i = 0; i < 4; i++){
 			int row = int(actions[i][0]) - 48;
 			int col = int(actions[i][1]) - 48;
@@ -73,26 +96,37 @@ int main() {
             }
         }
         nodesq.pop();
+        if(nodesq.empty()){
+            break;
+        }
     }
     
-    // Get the path 
+    // If we din't find any path, then help!
+    if(nodes.top() != end){
+        cout << -1 << endl;
+        return 0;
+    }
+
+    // If we did, then use the tree to get the shortest path.
     stack <string> path;
     path.push(nodes.top());
-    vector <string> actions = pactions(nodes.top());
+    vector <string> actions = movements(nodes.top());
     nodes.pop();
 
     while(!nodes.empty()){
     	if(binary_search(actions.begin(), actions.end(), nodes.top())){
     		path.push(nodes.top());
-    		actions = pactions(nodes.top());
+    		actions = movements(nodes.top());
     		nodes.pop();
     	}else{
     		nodes.pop();
     	}
     }
     
-    // Print path 
+    // Print number of steps to reach the battery. 
     cout << path.size() << endl;
+
+    // Once we got the path, print the commands.
     int src = stoi(path.top());
     path.pop();
     while(!path.empty()){
@@ -109,6 +143,7 @@ int main() {
     	src = dst;
     	path.pop();
     }
+    // If the drone is where the battery is, then just grab. 
     cout << "GRAB" << endl;
     
     return 0;

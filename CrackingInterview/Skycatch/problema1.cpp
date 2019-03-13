@@ -7,25 +7,32 @@
 using namespace std;
 
 bool isAdjacent(string actual, string element){
+    /* 
+    Returns true if the element is adjacent to actual, False otherewise.
+        
+        actual: 
+            Top element in a queue/vector of grid positions
+        element: 
+            Element that you want to know if it's adjacent
+    */
     int row = int(actual[0]) - 48;
     int col = int(actual[1]) - 48;
     
-    string pos1 = actual[0] + to_string(col+1);         // Right
-    string pos2 = to_string(row+1) + actual[1];         // Down
-    string pos3 = to_string(row+1) + to_string(col+1);  // Down right
-    string pos4 = to_string(row+1) + to_string(col-1);  // Down left
+    string right = actual[0] + to_string(col+1);         
+    string down = to_string(row+1) + actual[1];         
+    string downright = to_string(row+1) + to_string(col+1);  
+    string left = to_string(row+1) + to_string(col-1);
 
-    if(element == pos1 || element == pos2 || element == pos3 || element == pos4){
+    if(element == right || element == down || element == downright || element == left){
         return true;
     }
     return false;
 }
 
 int main() {
-    queue <string> gold;
-    unordered_map <string, vector<string> > hash_table;
-    
-    
+    unordered_map <string, vector<string> > mines;
+    queue <string> rocks;
+    // Test case (Modify to read it as a program input) ***
     vector <string> grid {"0000000011",
                           "0000000100",
                           "1100000110",
@@ -37,61 +44,61 @@ int main() {
                           "0000000000",
                           "0111100000"};
     
-    // Get valid indices  O(n2)
-    for(int i = 0; i < grid.size(); i++){
-        for(int j = 0; j < grid[i].size(); j++){
+    // Modify to read a file ***
+    int rows = 10;
+    int cols = 10;
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
             if(grid[i][j] == '1'){
-                gold.push(to_string(i)+to_string(j));
+                rocks.push(to_string(i)+to_string(j));
             }
         }
     }
     
-    string actual = gold.front();
-    hash_table[actual] = vector <string> ();
-    gold.pop();
+    // If there are no golden rocks, there are no golden mines.
+    if(rocks.empty()){
+        cout << "0" << endl;
+        return 0;
+    }
+
+    // Add the first golden rock to form a golden mine.
+    string actual = rocks.front();
+    mines[actual] = vector <string> ();
+    rocks.pop();
     
-    while(!gold.empty()){
-        string element = gold.front();
-        if(isAdjacent(actual, element)){  // Is it adjacent to the actual element?
-            hash_table[actual].push_back(element);
+    // Iterate over all the rocks and add them into an existent golden mine or as a new one
+    // according to its adjacency.
+    while(!rocks.empty()){
+        string element = rocks.front();
+        if(isAdjacent(actual, element)){  // Is it adjacent to the actual rock?
+            mines[actual].push_back(element);
         }else{
             bool found = false;
-            for(auto it = hash_table.begin(); it != hash_table.end(); it++){ // Is it adjacent to a previous element?
-                int s = hash_table[it->first].size();
+            for(auto it = mines.begin(); it != mines.end(); it++){ // Is it adjacent to a previous rock?
+                int s = mines[it->first].size();
                 for(int i = s-1; i >= 0; i--){
-                    string actual = hash_table[it->first][i];
+                    string actual = mines[it->first][i];
                     if(isAdjacent(actual, element)){
-                        hash_table[it->first].push_back(element);
+                        mines[it->first].push_back(element);
                         found = true;
                         break;
                     }
                 }
-                if(isAdjacent(it->first, element)){ // Is it adjacent to the key?
-                    hash_table[it->first].push_back(element);
+                if(isAdjacent(it->first, element)){ // Maybe to the first rock of a new mine?
+                    mines[it->first].push_back(element);
                     found = true;
                     break;
                 }
-
             }            
-            if(found == false){ // Nothing?, well then, it is a new one.
+            if(found == false){ // Nothing?, well then, it will be the first for its new mine.
                 actual = element;
-                hash_table[actual] = vector <string> ();
+                mines[actual] = vector <string> ();
             }
         }
-        gold.pop();
+        rocks.pop();
     }
-
-
-    for(auto it = hash_table.begin(); it != hash_table.end(); it++){
-        cout << it->first << " ";
-        for(string i : hash_table[it->first]){
-            cout << i << " ";
-        }    
-        cout <<""<< endl;
-    }
-    
-    cout << hash_table.size() << endl;
-    
-    
+    // Print the number of golden mines
+    cout << mines.size() << endl;    
     return 0;
 }
