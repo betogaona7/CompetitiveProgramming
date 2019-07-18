@@ -22,11 +22,9 @@ UVa is another online judge, I solved two problems that you could search in the 
 This folder contains sort algorithms using the pseudocodes written in the book: [Introduction to algorithms](https://mitpress.mit.edu/books/introduction-algorithms). 
 
 ## HackerRank
-Contains the solutions of interview practice questions using C++. The files only contains the solution as a function since HAckerRank gives you the code for reading the input.
+Contains the solutions of interview practice questions using C++. The files only contains the solution as a function since HackerRank gives you the code for reading the input.
 
 ## Programming languages
-This is a combination of theory and practice in different programming languages. 
-	### OOP C++
-	Theory of Object Oriented Programming using C++. Practically all the repository is practice of C++.
-	### Java
-	Started the 30-day challenge of HackerRank as a review of my Java skills. This contains the exercises. 
+This is a combination of theory and practice in different programming languages.
+- **OOP C++**: Theory of Object Oriented Programming using C++. Practically all the repository is practice of C++.
+- **Java**: Started the 30-day challenge of HackerRank as a review of my Java skills. This contains the exercises. 
