@@ -542,7 +542,7 @@ int main(){
     printv(v1); // 1 2 3 4 5 6 7 8 9
     
     // info 
-    cout << (int) v1.size() << endl;  // 10
+    cout << (int) v1.size() << emdñ;  // 10
     cout << v1.front() << endl; // 0
     cout << v1.back() << endl; // 9
     
@@ -568,8 +568,598 @@ int main(){
     
     // Vector 4 moved from vector 3
     vector<string> v4(std::move(v3);
-    printv(v4); // ab ab ab ab ab
+    printv(v4) // ab ab ab ab ab
     
     return 0;
+}
+```
+##### List
+List is like a vector but optimized for rapid insert and delete operations. List don't support random access. ```#include <list>```
+```c++
+// Template function to print list
+template <typename T>
+void printl(list <T> &l){
+    if(l.empty()) return;
+    for(T &i : l) cout << i << " ";
+    cout << endl;
+}
+int main(){
+    list <int> l1 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    printl(l1);
+    
+    // info
+    cout << (int)l1.size() << endl; // 9
+    cout << l1.front() << endl; //1
+    cout << l1.back() << endl; // 9
+    
+    // Insert an element at the back
+    l1.push_back(7);
+    printl(l1); // 1 2 3 4 5 6 7 8 9 7
+    
+    // Need am iterator to insert and erase
+    list<int>::iterator it1 = l1.begin();
+    while((*++it1 != 5) && (it1 != l1.end()));
+    if (it1 != l1.end()){
+        l1.insert(it1, 112); // insert 112 before 5
+    }
+    printl(l1); // 1 2 3 4 112 5 6 7 8 9 7
+    
+    // Find elelemt value 7 and erase it 
+    while((*++it1 != 7) && (it1 != l1.end()));
+    if(it1 != l1.end()){
+        l1.erase(it1);
+    }
+    printl(l1); // 1 2 3 4 112 5 6 8 9 7
+    
+    // Remove all element which value is 8
+    l1.remove(8);
+    printl(l1); // 1 2 3 4 112 5 6 9 7
+    
+    // Erase a range of values 
+    auto it2 = it1 = l1.begin();
+    while((*++it1 != 112) && (it1 != l1.end()));
+    while((*++it2 != 9) && (it2 != l1.end()));
+    if (it1 != l1.end() && it2 != l1.end()){
+        l1.erase(it1, it2);
+        printl(l1); // 1 2 3 4 9 7
+    }
+    return 0;
+}
+```
+Excelent choice for situations where you don't need random access and you'll be inserting and removing a lot of elements.
+##### Pair and tuple
+They are used in places where you want to carry multiple. strongly typed values. In some cases they can be more convinient than a _struct_. ```#include <utility>```
+```c++
+// Template to print the pair
+template <typename T1, typename T2> 
+void printpair(pair<T1, T2> &p){
+    cout << p.first << " : " << p.second << endl;
+}
+int main(){
+    // initializer list
+    pair<int, string> p1 = {47, "forty-seven"};
+    // default constructor 
+    pair<int, string> p2(72, "seventy-two");
+    // from make_pair
+    pair <int, string> p3;
+    p3 = make_pair(7, "seven");
+    printpair(p3); // 7 : seven
+    
+    // comparison operators (compares both values, but gives priority to 
+    // the first one )
+    cout << p1 == p2 << endl; // 0
+    cout << p1 < p2 << endl; // 1
+    cout << p1 < p3 << endl; // 0
+    cout << p1 > p2 << endl; // 0
+    cout << p2 > p3 << endl; // 1
+    return 0;
+}
+```
+Tuples can be many different sizes.
+```c++
+// print element of the tuple 
+void print3tuple(T t){
+    auto tsz = tuple_size<decltype(t)>::value;
+    if(tsz != 3) return;
+    cout << get<0>(t) << " : " << get<1>(t) << " : " << get<2>(t) << endl;
+}
+int main(){
+    tuple<int, string, int> t1 = {47, "forty-seven", 1 };
+    tuple<int, string, int> t2(73, "seventy-two", 2);
+    auto t3 = make_tuple(7, "seven", 3);
+    return 0;
+}
+```
+##### Array
+It is a fixed-size sequence container. The size of the array is defined when the array object is created, and it cannot change during the life if the array. Its elements are guaranteed to be stored in contigous memory locations.```#include <array>```
+```c++
+//print elements of the array
+template <typename T, size_t N>
+void printa(array<T, N> &a){
+    for(T &i : a) cout << i << " ";
+    cout << endl;
+}
+int main(){
+    array<int, 5> a1 = {1, 2, 3, 4, 5};
+    array <string, 5> a2;
+    a2 = {"one", "two", "three"};
+    printa(a2); // one two three
+    
+    // check size 
+    cout << a1.size() << endl; // 5
+    
+    // access elements
+    cout << a1[3] << endl; // 4
+    cout << a1.at(3) << endl; // 4
+    
+    // direct access data
+    int * ip1 = a1.data()
+    for(size_t i = 0; i < a1.size(); ++i){
+        cout << "element " << i << " is " << *ip1++ << endl;
+    }
+    return 0;
+}
+```
+##### Deque 
+It is  double-ended queue. It is optimized for rapid push and pop from its ends. It is most often uses as the default container for queues and stacks. ```#include <deque>```
+```c++
+// print deque 
+template <typename T> 
+void printdeq(T &d){
+    if(d.empty()) return;
+    for (auto v:d) cout << v << " ";
+    cout << endl;
+}
+int main(){
+    deque<string>d1 = {"one", "two", "three"};
+    
+    d1.push_back("four");
+    d1.push_front();
+    d1.push_back();;
+    
+    d1.pop_front();
+    d1.pop_back();
+    return 0;
+}
+```
+##### Queue 
+First in, first out. ```#include <queue>```. It uses an underlying container, the default is _deque_.
+
+```c++
+// report queue 
+template <typename T>
+void report_queue(T &q){
+    size_t sz = q.size();
+    cout << "size: " << sz;
+    if(sz) cout << " front: "<< q.front() << " back " << q.back();
+    cout << endl;
+}
+int main(){
+    // queue from a list 
+    list<int> l1 = {1, 2, 3, 4, 5};
+    queue<int, list<int>> qi(l1);
+    report_queue(q1); // size: 5 front: 1 back: 5
+    
+    // pop all from q1
+    while(!q1.empty()){
+        cout << q1.front() << " "; 
+        q1.pop();
+    }
+    cout << endl;
+    
+    // Default queue (deque)
+    queue<string> q2;
+    
+    // push strings onto q2
+    for(string s:{"one", "two", "three", "four", "five"}){
+        q2.push(s);
+    }
+    return 0;
+}
+```
+##### Stack
+Last in, first out. Like the _queue_, its underlying container is a _deque_. ```#include <stack>```.
+```c++
+template <typename T>
+void reportstk(T &stk){
+    cout << "size: " << stk.size();
+    if(stk.size()) cout << " top: "<< stk.top();
+    cout << endl;
+}
+int main(){
+    vector<int> v1 = {1, 2, 3, 4, 5};
+    stack<int, vector<int>> stk1(v1);
+    reportstl(stk1);
+    
+    stk1.push(6);
+    stk1.pop();
+    
+    // pop all from stk1
+    while(!stk1.empty()){
+        cout << stk1.top() << " ";
+        stk1.pop();
+    }
+    cout << endl;
+    
+    // create using default container (deque)
+    stack <string> stk2;
+    return 0;
+}
+```
+##### Set
+It holds a sorted set of elements. The _set_ class holds only unique elements where _multisets_ class allows duplicates. _unordered_set_doesn't sort elements and instead provides hashed keys for faster access. ```#include <set>```, ```#include <unordered_set>```.
+```c++
+// print elements of the set 
+template <typename T>
+void print_set(T &s){
+    if(s.empty()) return;
+    for(auto x:s) cout << x << " ";
+    cout << endl;
+}
+
+int main(){
+    set<string> set1 = {"one", "two", "three"};
+    set1.insert("four");
+    print_set(set1) // four one three two (alphabetical order)
+    
+    // find and erase aelement four
+    set<string>::iterator it = set1.find("four");
+    if(it != set1.end()){
+        set1.erase(it);
+    }else{
+        cout << "Not found" << endl;
+    }
+    
+    set1.insert("three") // Won't do anything because I already have a three
+    
+    // Check if inserting fails
+    auto r = set1.insert("three");
+    if(!r.second) cout << "Insert failed" << endl;
+    
+    // multiset 
+    multiset <string> set2 = {"one", "two", "three"};
+    set2.insert("three") // It inserts three again. Still ordened.
+    
+    // unordered set
+    unordered_set<string> set3 = {"one", "two", "three"}; // saved in any order
+    set3.insert("four");
+    
+    // find and erase element two
+    auto it2 = set3.find("two");
+    if(it2 != set3.end()){
+        set2.erase(it2);
+    }else{
+        cout << "Not found" << endl;
+    }
+    return 0;
+}
+```
+
+Sets are usefil in cases where you need an ordered set of objects that you can search, but you don't need random access. Or unoredered sets, with faster access using hash searches. Use multiset if you need duplicates.
+
+##### Map
+It provides a sorted set of key-value pairs. ```#include <map>```.
+```c++
+// print pair
+tempĺate <typename T1, typename T2>
+void print_pair(pair<T1, T2> &p){
+    cout << p.first << " : " << p.second << endl;
+}
+// print the elements of the map
+template <typename T> 
+void print_map(T &m){
+    if(m.empty()) return;
+    for(auto x : m)  print_pair(x);
+    cout << endl;
+}
+int main(){
+    map<string,string> mapstr = {{"George", "Father"},
+                                 {"Ellen", "Mother"},
+                                 {"Ruth", "Daughter"}};
+    cout << "size " << mapstr.size() << endl;
+    cout << "George " << mapstr["George"] << endl;
+    cout << "Ellen" << mapstr.at("Ellen") << endl;
+    cout << "Spike" << mapstr.find("Spike")->second << endl;
+    
+    mapstr.insert({"Luke", "Neighbor"}); 
+    
+    // insert duplicate 
+    auto rp = mapstr.insert({"Luke", "Neighbor"});
+    if(rp.second){
+        cout << "inserted" << endl;
+    }else{
+        cout << "Instert failed" << endl;
+    }
+    
+    // find and erase
+    auto it = mapstr.find("Spike");
+    if(it != mapstr.end()){
+        mapstr.erase(it);
+    }
+   return 0; 
+}
+```
+_map_ doesn't accept duplicates. _multimap_ does.
+# STL Iterators 
+An iterator is an STL object that can iterate through the elements of a container. It acts a lot like a pointer. It can be incremented and de-referenced as if it were a pointer.```#include <iterator>```. Example:
+```c++
+int main(){
+    vector <int> v1 = {1, 2, 3, 4, 5, 6, 7};
+    vector<int>::iteratpr it1 // iterator object
+    
+    vector <int>::iterator ibegin = v1.begin();
+    // auto ibegin = v1.begin();
+    vector<int>::iterator iend = v1.end();
+    
+    for(it1 = ibegin; it1 < iend; ++it1){
+        cout << *it1 << " "
+    }
+    cout << endl;
+    return 0;
+}
+```
+##### Input iterator
+It is the simplest and most limited form of iterator. It may be used to read values of an object once and then increment. It cannot write. cannot decrease, and cannot read a value twice.  _isotream_ uses an input operator for _cin_.
+```c++
+int main(){
+    double d1 =, d2 = 0;
+    cout << "Two numeric values: " << flush;
+    cin.clear();
+    istream_iterator<double> eos;      //default constructor is end-of-stream
+    istream_iterator<double> iit(cin); //stdin interator
+    
+    if(iit == eos){
+        cout << "No values" << endl;
+        return 0;
+    }else {
+        d1 = *iit++;
+    }
+    if(iit == eos){
+        cout << "No second value" << endl;
+        return 0;
+    }else{
+        d2 = *iit;
+    }
+    cin.clear();
+    cout << d1 << " * " << d2 << " = " << d1*d2 << endl;
+    return 0;
+}
+```
+##### Output iterator
+It is the complement of the input operator. It may be used to write a value once and then increment.
+```c++
+int main(){
+    ostream_iterator<int> output(cout, " ");
+    for(int i : {3, 197, 42}){
+        *output++ = i;
+    }
+    cout << endl;
+    return 0;
+}
+```
+##### Forward iterator
+It is like a combination of input and output iterators with a few other capabilities. The _forward_list_ is a sinle linked list type. 
+```c++
+#include <forward_list>
+int main(){
+    forward_list<int> fl1 = {1, 2, 3, 4, 5};
+    forward_list<int>::iterator it1; // forward iterator
+    
+    for(it1 = fl1.begin(); it1 != fl1.end(); ++it1){
+        cout << *it1 << " ";
+    }
+    cout << endl;
+}
+```
+##### Bidirectional iterator 
+It may be used to access the sequence of a container in either direction. _set_ uses this iterator. 
+```c++
+int main(){
+    set<int> set1 = {1, 2, 3, 4, 5};
+    set<int> :: iterator it1 // iterator object
+    
+    // iterate forward 
+    for(it1 = set1.begin(); it1 != set1.end(); ++it1){
+        cout << *it1 << " ";
+    }
+    cout << endl;
+    
+    // iterate backward 
+    for(it1 = set1.end(); it1 != set1.begin();){
+        cout << *--it1 << " ";
+    }
+    cout << endl;
+    
+    // range-based for loop
+    for(int i : set1){
+        cout << i << " ";
+    }
+    cout << endl;
+    return 0;
+}
+```
+##### Random access iterator
+It is the most complete of all. It may be used to access any element at any position in a container. It offers all of the functionality of a C pointer.
+```c++
+int main(){
+    vector <int> v1 = {1, 2, 3, 4, 5};
+    vector<int>::iterator it1;
+    
+    // iterate forward 
+    for(it1 = v1.begin(); it1 != v1.end(); ++it1){
+        cout << *it1 << " ";
+    }
+    cout << endl;
+    
+    // iterate backward 
+    for(it1 = v1.end(); it1 != v1.begin();){
+        cout << *--it1 << " ";
+    }
+    cout << endl;
+    
+    it1 = v1.begin() + 5
+    cout << "Element begin + 5" <<  *it1 << endl;
+    cout << "Element [5]" << v1[5] << endl;
+    
+    it1 = v1.end() - 3;
+    cout << "Element end -3 " << *it1 << endl;
+    
+    return 0;
+}
+```
+# Transformations
+```#include <algorithm>```
+##### Transform function
+It is used to run bulk transformations on elements in a container.```transform``` takes four arguments: 
+- Starting point iterator, it is an input operator.
+- Input operator for the endpoint of the source container.
+- Begin point of the destination container. It is an otput operator.
+- An object operator. It is a unary function, so it's a pointer to either a function or object functor that takes one argument.
+```c++
+template <typename T>
+class accum { // accumulates value
+        T _acc = 0;
+        accum(){}
+    public: 
+        accum(T n) : _acc(n){}
+        T operator()(T y){_acc += y; return _acc;}
+};
+template <typename T>
+void disp_v (vector<T> &v){
+    if(!v.size()) return;
+    for(T e: v){cout << e << " "; }
+    cout << endl;
+}
+
+int main(){
+    accum <int> x(7);
+    cout << x(7) << endl; // 14
+    vector<int> v1 = {1, 2, 3, 4, 5};
+    disp_v(v1); // 1 2 3 4 5
+    
+    vector<int> v2(v1.size());
+    transform(v1.begin(), v1.end(), v2.begin(), x);
+    disp_v(v2); // 15 17 20 24 29
+    return 0;
+}
+```
+
+##### Lambda transformation
+You may also use a lambda function in place of the functor in your transformation.
+```c++
+template <typename T>
+void disp_v (vector<T> &v){
+    if(!v.size()) return;
+    for(T e: v){cout << e << " "; }
+    cout << endl;
+}
+
+int main(){
+    int accum = 14;
+    auto x = [accum](int d) mutable -> int{return accum += d };
+    
+    vector<int> v1 = {1, 2, 3, 4, 5};
+    disp_v(v1); // 1 2 3 4 5
+    
+    vector<int> v2(v1.size());
+    transform(v1.begin(), v1.end(), v2.begin(), x);
+    disp_v(v2); // 15 17 20 24 29
+    
+    vector<string> v3 = {"one", "two", "three", "four","five"};
+    vector <size_t>v4(v3.size())
+    transform(v3.begin(), v3.end(), v4.begin(), [](string &s)-> size_t {
+        return s.size();}); 
+    disp_v(v4); // 3 3 5 4 4 
+    return 0;
+}
+```
+##### Transforming strings
+It is a special case, because strings are not containers.
+```c++
+int main(){
+    string s1 = "This is an string";
+    
+    string s2(s1.size(), '_');
+    transform(s1.begin(), s1.end(), s2.begin(), ::toupper);
+    cout << s2 << endl; // THIS IS AN STRING
+    return 0;
+}
+```
+##### Binary transformation
+The _transform_ functiuon has another form which uses a binary operator. It takes two operands and allows the results to be sent to a third container.
+```c++
+template <typename T>
+class embiggen{
+        T _accum = 1;
+    public:
+        T operator() (const T &n1, const T &n2){ return _accum = n1*n2* _accum; }
+};
+int main(){
+    vector <long> v1 = {1, 2, 3, 4, 5};
+    vector <long> v2 = {5, 10, 15, 20, 25 };
+    vector <long> v3(v1.size(), 0);
+    embiggen<long> fbig;
+    
+    transform(v1.begin(), v1.end(), v2.begin(), v3.begin(), fbig);
+    disp_v(v1); // 1 2 3 4 5 
+    disp_v(v2); // 5 10 15 20 25
+    disp_v(v3); // 5 100 4500 360000 45000000
+}
+```
+# Functors
+A _functor_ is simple a class with an operator overload for the function called ```operator```.
+##### Arithmetic functors.
+They are standard template functor defined in ```#include <functional>```
+```c++
+int main(){
+    vector <long> v1 = {26, 52, 79, 114, 183};
+    vector <long> v2 = {1, 2, 3, 4, 5};
+    vector <long> v3(v1.size(), 0);
+   
+    plus<long> f; / this is the functor
+    // minus, divides, multiplies, modulus, negate
+    
+    transform(v1.begin(), v1.end(), v2.begin(), v3.begin(), f);
+    disp_v(v3); // 27 54 82 118 188
+    return 0;
+}
+```
+##### Relational functors
+```c++
+template <typename T>
+void disp_v(vector<T> &v){
+    if(!v.size()) return;
+    if(typeid(T) == typeid(bool)){
+        for(bool e:v){cout << (e ? "T" : "F") << " ";}
+    }else{
+        for(T e : v){ cout << e << " "; }
+    }
+    cout << endl;
+}
+int main(){
+    vector <long> v1 = {26, 52, 79, 114, 183};
+    vector <long> v2 = {52, 2, 72, 114, 5};
+    vector <long> v3(v1.size());
+   
+    greater<long> f; / this is the functor
+    // less, greater_equal, less_equal, equal_to, not_equl_to
+    
+    transform(v1.begin(), v1.end(), v2.begin(), v3.begin(), f);
+    disp_v(v3); // F T T F T
+    return 0;
+}
+```
+##### Logical functors
+Useful for simple applications.
+```c++
+int main(){
+    vector<bool> v1 = {1, 0, 1, 0, 1, 0};
+    vector<bool> v2 = {1, 1, 1, 1, 0, 0};
+    vector<bool> v3(v1.size(), 0);
+    
+    logical_and<bool> f;
+    // logical_or, logical_not
+    transform(v1.begin(), v1.end(), v2.begin(), v3.begin(), f);
+    disp_v(v3); // 1 0 1 0 0 0
 }
 ```
