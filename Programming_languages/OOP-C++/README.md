@@ -1163,3 +1163,286 @@ int main(){
     disp_v(v3); // 1 0 1 0 0 0
 }
 ```
+# STL Algorithm
+The functions are varied. ```#include <algorithm```
+##### Testing conditions
+Testing on ranges of elements. These conditional algorithms use a predictive function. They can be handy for testing a range of values in a container, Example.
+```c++
+// Predictive function is_prime
+template <type T>
+const bool is_prime(const T &num){
+    if(num <= 1) return false;
+    bool primeflag = true;
+    for(T l=2; l < num; ++l){
+        if(num%l == 0){
+            primeflag = false;
+            break;
+        }
+    }
+    return primeflag;
+}
+template <typename T>
+void disp_v(const T &v){
+    if(!v.size()) return; 
+    for(auto e:v){ cout << e << " "; }
+    cout << endl;
+}
+int main(){
+    const vector<int> v1 = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+    
+    // any_of, none_of
+    if(all_of(v1.begin(), v1.end(), is_prime<int>)){
+        cout << "True" << endl;
+    }else{
+        cout << "False" << endl;
+    } 
+    return 0;
+}
+```
+##### Searching and counting
+The find function does a sequential search using the equal to comparison. If the value is found, it returns an iterator pointing to that value. The find_if uses an unary function.
+```c++
+// unary function is_odd
+template <typename T> 
+bool is_odd(const T &n){
+    return ((n%2) == 1);
+}
+int main(){
+    const vector <int> v1 = {2, 3, 7, 5, 7, 11, 13, 17, 19};
+    
+    // find_if_not
+    auto it = find(v1.begin(), v1.end(), 13);
+    auto it2 = find_if(v2.begin(), v2.end(), is_odd<int>); // return the first odd
+    
+    // search a range
+    const vector <int> v2 = {7, 11, 14};
+    auto it3 = search(v1.begin(), v1.end(), v2.begin, v2.end());
+    
+    if(it != v1.end()){
+        size_t index = it - v1.begin();
+        cout << "Found at index " << index << " : " << *it << endl;
+    }else{
+        cout << "Not found" << endl;
+    }
+    
+    // counting occurances of 7
+    auto c = count(v1.begin(), v1.end(), 7);
+    // count_if
+    cout << "Found " << c << " occurances" << endl;
+    return 0;
+}
+```
+##### Replacing and removing
+```c++
+int main(){
+    vector <int> v1 = {2, 3, 7, 5, 7, 11, 13, 17, 19};
+    
+    // replace, replace_if
+    replace(v1.begin(), v1.end(), 7, 1);
+    disp_v(v1); // 2 3 1 5 1 11 13 17 19
+    
+    // remove, remove_if, unique
+    auto it = remove(v1.begin(), v1.end(), 5);
+    if(it == v1.end()){
+        cout << "No elements removed" << endl;
+    } else {
+        v1.resize(it - v1.begin());
+    }
+    disp_v(v1) // 2 3 1 1 11 13 17 19
+    return 0;
+}
+```
+##### Modifying algorithms
+Make changes to sequences.
+- _copy_ makes a copy of the source range to the target.
+- _copy_n_ does the same. Instead of the end iterator, you give it a nmber of items to copy.
+- _copy_backward_ copies the elements back to front, but the result is in the original order.
+- _reverse_copy_ copies the elements in reverse order.
+- _reverse_ reverse the elements inplace. It uses a swap function to accomplish that.
+- _fill_ fill a container.
+- _generate_ creates values from a provided function.
+- _rshuffle_ shuffles the elements inplace.
+
+```c++
+int main(){
+    vector <int> v1 = {2, 3, 7, 5, 7, 11, 13, 17, 19};
+    vector <int> v2(v1.size(), 0);
+    
+    copy(v1.begin(), v1.end(), v2.begin());
+    fill_n(v1.begin, 10; 100);
+    generate(v2.begin(), v2.end(), []()->int {return rand();});
+    shuffle(v1.begin(), v1.end(), extrenalRandomNumGenerator);
+    return 0;
+}
+```
+##### Partitions 
+This functions rearrange a container, so the elements that meet a criteria are at the beginning.
+```c++
+template <typename T> 
+bool is_even_tens(T &n){
+    if(n < 10) return false;
+    return ((n / 10) % 2) == 0;
+}
+int main(){
+    vector<int> v1 = {11, 13, 17, 19, 23, 29, 31, 37, 41};
+    partition(v1.begin(); v1.end(), is_even_tens<int>); // Not ordered
+    // stable_partition to have order.
+    print_v(v1); //23 29 41 37 31 19 17 13 11 
+}
+```
+##### Sorting
+The _sort_ function when working with floats return them in any order. Example 3.73 3.23 3.3. So, to fix this you can use _stable_sort_ which returns them in the correct order. Example 3.23 3.3 3.73.
+```c++
+template <typename T> 
+bool mycomp(const T &lh. const T &rh){
+    return lh > rh;
+}
+int main(){
+    vector<int> v1 = {83, 53, 47, 23, 13, 59, 29}
+    sort(v1.begin(), v1.end(), mycomp<int>);
+    return 0;
+}
+```
+##### Merging sequences. 
+The merge function is used to merge sorted sequences into one sorted sequence.
+```c++
+int main(){
+    vector <int> v1 = {83, 53, 47, 23, 13};
+    vector <int> v2 = {2, 97, 7, 61, 73};
+    vector <int> v3(v1.size()+v2.size());
+    sort(v1.begin(), v1.end());
+    sort(v2.begin(), v2.end());
+    merge(v1.begin(), v1.end(), v2.begin(), v2.end(), v3.begin());
+    return 0;
+}
+```
+##### Binary search
+Binary search function perfoms a classic binary search on a sroted container.
+```c++
+int main(){
+    int n = 29;
+    vector<int> v1 = {83, 53, 47, 23, 13, 59, 29, 41 ,12};
+    sort(v1.begin(),  v1.end());
+    
+    cout << "Searching for " << n << "endl";
+    if(binary_search(v1.begin, v1.end(), n)){
+        cout << "Found" << endl;
+    }else{
+        cout << "Not found" << endl;
+    }
+    
+    auto it = lower_bound(v1.begin(), v1.end(), n);
+    cout << "Lower bound " << *it << endl;
+    
+    auto it = upperr_bound(v1.begin(), v1.end(), n);
+    cout << "Upper bound " << *it << endl;
+    
+    auto pr = equal_range(v1.begin(), v1.end(), n);
+    cout << "Lower bound " << *pr.first << endl;
+    cout << "Upper bound " << *pr.second << endl;
+    return 0;
+}
+```
+
+# Deeper understanding of pointers
+A pointer is a variable that stores an address location. They are used because the pointer notation is faster when working with arrays, they provide functions access to large blocks of data, and they can allocate memory dinamically. When it is not initilized, it is set to NULL.
+```c++
+int main(){
+    int number = 240;
+    int *numPtr;
+    numPtr = &number;
+    cout <<< "The address of number is " << numPtr << endl; 
+}
+```
+The address represents the location of the data in memory (hexadecimal number). The pointer contains the address value (It actually contains a hexadecimal number).
+
+**Memory allocation**
+| Data type        | Memory allocated   |
+| -------------    |:-------------:| 
+| char, bool       | 1 byte  | 
+| short            | 2 bytes | 
+| int, long, float | 4 bytes |
+| double           | 8 bytes |
+
+Use  ``` sizeof(bool) ``` with all data types to confirm its memory allocated. The size of a pointer is four bytes because it is just an address which is an hexadeciaml value. 
+##### Pointer to arrays
+```c++
+int main(){
+    double values[10];
+    double *pValue =values // The array actually contains the address of the first element
+    cout << (values == pValue) << endl; // true
+    return 0;
+}
+```
+##### Character pointers 
+These pointers are a little different than numeric pointers. Most of the time the character pointer is used to point to a string literal, therefore, we must cast.
+```c++
+int main(){
+    char initial = 'P';
+    char *pInitial = &initial;
+    cout << "Address of initial P is " << (void *)pInitial << endl; 
+    // another way to cast is using static_cast<void*>(pInitial);
+}
+```
+The string literal is stored automatically as a null terminated string literal. This means that a null character is added automatically to the character array as the last character.
+As strings are mutable, it is good practice to set the pointer as a constant pointer, so the pointer will be mutable as well. ```const char* myString{"Hello world"}```
+##### Dereferencing pointers 
+Applying the indirection operator ```*``` to a pointer accesses the contents of the memory location to which it points. The name indirection operator stens from the fact that the data is being accessed indirectly. 
+```c++
+int main(){
+    double testScores[5], sum = 0;
+    double *pTestScore = testScores;
+    for(int i = 0; i < 5; ++i){
+        Cout << "Enter the test score " << endl;
+        cin >> *(pTestScore + i);
+        sum += *(pTestScore + i);
+    }
+    return 0;
+}
+```
+##### Pointers pointing to Pointers
+```c++
+/*
+int num = 10;
+int * pNum = &num;
+int ** p2Num = &pNum;
+*/
+int testScores[5]{100, 95, 99, 85, 83};
+int *pointerArray[5];
+for(int i = 0; i < 5; ++i){
+    pointerArray[i] = &(testScores[i]);
+    cout << **(pointerArray + i) << endl;
+}
+```
+##### Dynamic memory allocation
+It is allocation the memory required to store the data you're working with at run time, rather than having the amount of memory predefined when the program is compiled. Dynamic memory is identified by its address, and this is why pointers are used to store this information. Two problems can happen when using dynamic memory: memory leaks and memory fragmentation. The ```new``` operator is used for dynamic memory. Its complement is ```delete```, it releases the space.
+```c++
+int main(){
+    int * pointer(new int(7));
+    cout << *pointer << endl; // 7
+    delete pointer;
+    
+    return 0;
+}
+```
+
+##### Pointer as arguments
+When you're passing a pointer to a function, whatever changes are made in the function are also made in the original variable.
+```c++
+double averageCost(double *priceArray, int *count){
+    double sum = 0;
+    for(int i = 0; i < *count; i++){
+        sum += *(priceArray + i);
+    }
+}
+int main(){
+double prices[5]{5.00, 4.50, 3.75, 9.10, 6.75};
+int quantity = 5;
+double average = averageCost(prices, &quantity);
+cout << "$" << average << endl;
+    return 0;
+}
+```
+##### Stack and Heap
+Memory is divided into stack and heap. Variables created at compile time are stored in the stack as well as function arguments and the _return_ loation. The stack has a fixed size determined by your computer. When variable is no longer used the stack is released.
+Memory not used by the OS or program is called the heap. It represents unused memory of the program, and can be used to allocate the memory dynamically when the program runs. 
