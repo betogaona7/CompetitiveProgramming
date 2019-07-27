@@ -1,14 +1,34 @@
-# Classes and objects 
-Classes can be defined as ```class``` or ```struct```. The only different is that members on ```struct``` are public by default. It is good practice to use struct when the structure will have only data memembes, and use class where there are also function members.
+# Table of Contents
+1.  [Classes and objects](#Classes-and-objects)
+2.  [Class inheritance](#Class-inheritance)
+3.  [Smart pointers](#Smart-pointers)
+4.  [Move semantics](#Move-semantics)
+5.  [Lambda functions](#Lambda-functions)
+6.  [The C preprocessor](#The-C-preprocessor)
+7.  [Templates](#Templates)
+8.  [STL containers](#STL-containers)
+9.  [STL iterators](#STL-iterators)
+10. [Transformations](#Transformations)
+11. [Functors](#Functors)
+12. [STL algorithms](#STL-algorithms)
+13. [More about pointers](#More-about-pointers)
 
-``` :: ```  scope resolution operator, means that setValue is member function of class1.
+
+
+# Classes and objects 
+Classes can be defined as ```class``` or ```struct```. The only different is that members on ```struct``` are public by default. It is good practice to use ```struct``` when the structure will have only data members, and use class where there are also function members.
+
+``` :: ```  scope resolution operator, means that _setValue_ is member function of _class1_.
+
 ```c++ 
 void class1::setValue(int & value){
     i = value; 
 }
 ``` 
+
 ##### Programs are often divided in three parts:
 ```file.h```  are headers files. It contains the class definition. For example:
+
 ```c++
 class class1{
     int i = 0;
@@ -19,6 +39,7 @@ class class1{
 ``` 
 
 ``` file.cpp ``` contains the implementation, the member functions. For example:
+
 ```c++ 
 void class1::setValue(const int & value){
     i = value;
@@ -27,8 +48,10 @@ int class1::getValue() const{
     return i;
 }
 ``` 
+
 ``` main.cpp ``` contains everything else. For example:
 ```c++ 
+
 int main(){
     const int i = 47;
     class1 ob1;
@@ -37,6 +60,7 @@ int main(){
     return 0;
 }
 ``` 
+
 ##### Const-qualified object
 You can have two different functions with exactly the same signature where the only difference is that one is const-qualified and one is not. The mutuable one will get called by mutable objects and the const-qualified ones  will get called by const-qualified objects. Example:
 
@@ -56,6 +80,7 @@ Thumb rule: const functions can always get called from mutable objects and from 
 They create and destroy objects from a class. 
 - implicit constructor: It is the default, meaning that you didn't define one.
 - Copy constructor: It was defined by you.
+
 ```c++
 Class class1{
     public: 
@@ -64,21 +89,27 @@ Class class1{
         ~classs1(); //destructor
 }
 ```
+
 ``` : ``` is a special initializer that is used with constructors on classes. Example:
+
 ```c++
 class1::class1():type("unknown"), name("unknown"){
     puts("Constructor with arguments");
 }
 ``` 
+
 Constructors with only one argument can perfom implicit conversion. This is that if it takes in as input an int, and you send it a char like 'x', it implicitly will convert the 'x' to the value of 120, which is the ASCCI value. To avoid this we can add the word ``` explicit ``` . Example:
+
 ```c++
 class class1{
         public:
             explicit class1(const int & value);
 }
 ``` 
+
 ##### Namespaces 
 A tool to avoid name collisions. Typically they are defined on header files.
+
 ```c++
 namespace bw{
     const std::string prefix = "(bw::string)";
@@ -94,7 +125,8 @@ namespace bw{
 ``` 
 
 ##### Self referencing pointer 
-Object member functions use```  this ```  to provide a pointer to the current object. Example:
+Object member functions use ```  this ``` to provide a pointer to the current object. Example:
+
 ```c++
 class class1{
     public:
@@ -111,9 +143,12 @@ int main(){
     printf(o1.getValue()); // pointe ... ess 0x7ffe..
 }
 ``` 
+
 It is very useful in some circunstances, like for example, when overloading an assignment operator, you wan to return a reference to the current object so that your assigments can be chained.
+
 ##### Allocating object memory 
 Keywords ``` new ```  and ``` delete ```  are used to allocate and deallocate memory. Useful when you created an object and you wanto to use it beyond the lifetime of a function or a block, and destroy it later.
+
 ```c++ 
 int main(){
     try{
@@ -127,6 +162,7 @@ int main(){
 ``` 
 
 To do the same without a try-catch block. 
+
 ```c++
 int main(){
     class1 *ob1 = new (nothrow) class1[10];
@@ -138,8 +174,10 @@ int main(){
     delete [] ob1;
 }
 ``` 
+
 ##### Functors 
 By overloading the function operator, you can create an object that operates as if it were a function. This can be a handy technique for circmstances where you need to keep state or other context information within you functions calls.
+
 ```c++
 class MultyBy{
         int mult = 1;
@@ -154,6 +192,7 @@ int main(){
     return 0;
 }
 ``` 
+
 # Class inheritance
 Inheritance represents the ability to reuse code by deriving a class from a base class. 
 
@@ -165,6 +204,7 @@ There are three different levels of memeber access, this levels determine what o
 
 ##### Simple inheritance
 It is simple a metter of creating a base class and then declaring the inheritance in your derived class definition. Example:
+
 ```c++ 
 class Animal{
         string name;
@@ -179,8 +219,10 @@ class Dog : public Animal {
         Dog(string n) : Animal(n, "dog", "woof"){};
 }
 ``` 
+
 ##### Accessing the base class
 When creating a derived class, it is sometimes necessary to access member data and functions from the base class. For example:
+
 ```c++
 class Animal{
         string name;
@@ -198,8 +240,10 @@ class Dog : public Animal {
         string latin() const { return Animal::name() + "-ay"; }
 }
 ``` 
+
 ##### Friendship 
 The ``` friend ``` qualifier allows you to grant private memembers access to other classes or functions. It should be used with a great deal of caution. Most of the time, it's best practice to access private members through the class interface methods because it defeats the purpose of encapsulation. 
+
 ```c++
 class Animal{
         string name;
@@ -212,6 +256,7 @@ const string &get_animal_name(const Animal &a){
     return a.name;
 }
 ``` 
+
 ##### Multiple inheritance
 It is a matter of listing more than one base class in the class definition. Ecample:
 ```c++
@@ -225,8 +270,10 @@ class MyClass: public BaseA, public  BaseB{
     ...
 }
 ``` 
+
 ##### Polymorphism
 Overload a function that is defined in a base class. ``` virtual ```   says the compiler that the memeber function may be overloaded.
+
 ```c++
 class Animal{
         string sound;
@@ -242,11 +289,13 @@ class Cat : public Animal{
         void speak() const {Animal::speak(); puts("purrrrr");}
 }
 ``` 
+
 # Smart pointers 
 A smart pointer is a template class that uses operator overloads to provide the functionality of a pointer while providing improved memory management and safety. It is essentially a wrapper around a standard bare C language pointer. They are defined in the memory header: ```#include <memory> ```
 
 ##### Unique pointer 
 It is a kind of smart pointer that cannot bec opied. There is only ever one copy of this pointer, so you cannot inadvertently make copies of it. and there is never any doubt about who owns it.
+
 ```c++
 // Define unique pointer 
 std::unique_ptr<int> a(new int(7);
@@ -265,15 +314,19 @@ b.reset();
 // Now C is NULL, the object has not been destroyed.
 c.release();
 ```
+
 You cannot pass a unique pointer to a functions. (Use a reference instead). Example:
+
 ```c++
 void f(std::unique_ptr<int> &p){
     disp(p);
 }
 ```
 This is necesary because a function call makes a copy of the object to pass it to the function.
+
 ##### Shared pointer
 It works very much like a unique pointer with the distiction that you may make copies of a shared pointer. It provides a limited garbage collection facility for managing the number of pointer to the same object.
+
 ```c++
 // Create pointer 
 auto a = std::make_shared<int>(7); // recommended way
@@ -286,10 +339,12 @@ a.reset(new int(3);
 auto c = b;
 ```
 It is very efficient, easy to use, and it makes managing shared memory resources relatively simple.
+
 ##### Weak pointer 
 It is a special case of a shared pointer. It is not counted in the shared pointers reference count. This is useful for cases where you may need a pointer that doesn't affect the lifetime of the resouce it points to.
 
 A weak pointer is typically created from a shared pointer. Example:
+
 ```c++
 // Create shared pointer
 auto a = std::make_shared<int>(7);
@@ -302,9 +357,12 @@ auto c3 = a; //Here, reference count is 4
 // Create weak pointer
 auto w1 = std::weak_ptr<int>(a);
 ```
+
 A typical use case if when you want to prevent a circular reference. For example a _manager_ object may point to the _employee_ it manages while the _employee_ object may also point back up to the _manager_ it reports to. These objects now keep each other alive because they refer to each other. So you cannot destroy either _manager_ nor _employee_.
+
 ##### Custom deleter
 Sometimes when destroying a smart pointer, you may need to do more than just destroy the managed object. For these circumstances, you may define a custom deleter.
+
 ```c++
 // Define pointer function to destroy
 void deleter(const int *o){
@@ -343,8 +401,10 @@ int main(){
     display(v3); // It display v1 content
 }
 ```
+
 ##### Move constructor 
 In order to take advantage of move semantics in your own class, you will need to create  a move constructor. Example:
+
 ```c++
 class classA{
     public:
@@ -361,8 +421,10 @@ int main(){
     classA c = std::move(a);
 }
 ```
+
 ##### Swap and copy
 Add it on an operator, this will be more efficient.
+
 ```c++
 class classA{
     public:
@@ -377,6 +439,7 @@ void classA::swap(classA & o){
     std::swap(x, o.x);
 }
 ```
+
 ##### Rule of five
 A generally accepted rule in C++ is that if you define any of these five members functions in your class you will need to define all five.
 ```c++
@@ -388,6 +451,7 @@ A generally accepted rule in C++ is that if you define any of these five members
 ```
 # Lambda functions 
 They are anonymous functions (functions without a name) with the ability to refer to identifiers outside of its own scope.
+
 ```c++
 int main(){
     char lastc = 0;
@@ -401,6 +465,7 @@ int main(){
     return 0;
 }
 ```
+
 ``` [&lastc] ``` - this is called the capture. In this case is capturing a reference to the _lastc_ variable. That means that the lambda function can use this variable as a reference.  
 ``` (const char &c)```- This is the parameter list, sames as a normal function.
 ```->``` Function return operator. In this example, it says that the function return a character.
@@ -419,6 +484,7 @@ Lambda functions have several options for capturing variables outside the lambda
 
 ##### Polymorphic lambdas 
 It is possible to construct a minimally polymorphic lambda function. Example:
+
 ```c++
 int main(){
     double n = 42; 
@@ -428,10 +494,12 @@ int main(){
     return 0;
 }
 ```
-# The C Preprocessor
+# The C preprocessor
 It provides a number of essential capabilities for both the C and C++ languages.
+
 ##### Macros as constants 
 One common use for the preprocessor is to define constants. In fact, the preprocessor cannot define constants or any other C++ language object, but it does have a feature that is commonly used  for this purpose: Macro.
+
 ```c++
 #DEFINE ONE 1 // Don't use a semicolon here. 
               // This is not a real constant, it is a macro.
@@ -441,15 +509,20 @@ int main(){
     return 0;
 }
 ```
+
 Every occurrence of the word ONE will be replaced with the literal one. IT could be problematic. The literal value is not type, it's a literal value. You can tun into namespace collisions and make debugging very challenging.
+
 ##### Including files
 Typiucally you will have one or more ```#include```directives at the top of each file. This is the most common or the most visible use of the preprocessor. The pre-processor replaces the include directive with the contents of their respective included header files; Then passes that combined filte to the compiler.
+
 ```c++
 #include <stdio>
 #include "myfile.h"
 ```
+
 ##### Conditional compilation 
-The C pre-processor provides a number of directiver for conditional compilation: `#if`, `#ifdef`, `#ifndef`, `else`, `elif`, `endif`. And this two special cases: `#if defined (MARCO)`, `if !defined(MACRO)`-
+The C pre-processor provides a number of directiver for conditional compilation: `#if`, `#ifdef`, `#ifndef`, `else`, `elif`, `endif`. And this two special cases: `#if defined (MARCO)`, `if !defined(MACRO)`.
+
 ```c++
 #ifndef CONDITIONAL_H_
 #define CONDITIONAL_H_
@@ -470,8 +543,10 @@ int main(){
     cout << NUMBER << endl; // Will print 3 because we didn't define FOO
 }
 ```
+
 ##### Macros 
 The C pre-processor provides a powerful and flexible macro system. 
+
 ```c++
 #define TIMES(a, b) (a * b)
 #define MAX(a, b)(a > b ? a : b)
@@ -483,6 +558,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Include guard
 When a header file is included by other header files, there is a possibility that a particular header file could be included more than once and this can create errors, for that reason we need an _include guard_. 
 ```c++
@@ -491,8 +567,10 @@ When a header file is included by other header files, there is a possibility tha
 ...
 #endif // __INCLUDE_MYCLASS
 ```
+
 # Templates 
 IT is essentially a compiler abstraction that allows you to write generic code that applies to various types or classes without concern for the details of the type.
+
 ```c++
 template <typename T>  
 T maxof (const T Ta, const T &b){
@@ -505,15 +583,20 @@ int main(){
     return 0;
 }
 ```
+
 When a ```template``` is called, the compiler creates a specialization. The specialization is effectively a compy of the function specifically for a given set of types. So, in our example the next function is created in compile time (invisible to the programmer).
+
 ```c++
 int maxof(const int &a, const int &b){
     return (a > b ? a:b);
 }
 ```
+
 The specializations ensure that the templates are type safe, but this also imposes overhead.
+
 ##### Template variables
 C++ 14 provides a new template implementation for strongly typed variables.
+
 ```c++
 template <typename T>
 T pi = T(3.14159265358979L);
@@ -524,11 +607,15 @@ int main (){
     return 0;
 }
 ```
+
 Template classes and template class implementation in a same file to avoid a linking error. 
+
 # STL containers 
 STL containers share a number of common features in order to make them convenient and easy to use. The point of STL containers is to make common data structures available to any compatible type or class. 
+
 ##### Vector 
-It holds objects in a strict sequential order. ```#include <vector>```
+It holds objects in a strict sequential order. ```#include <vector>```.
+
 ```c++
 // Template to print elements of a vector
 template <typename T> 
@@ -537,12 +624,13 @@ void printv(vector<T> &v){
     for(T &i : v) cout << i << " ";
     cout << endl;
 }
+
 int main(){
     vector<int> v1 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     printv(v1); // 1 2 3 4 5 6 7 8 9
     
     // info 
-    cout << (int) v1.size() << emdñ;  // 10
+    cout << (int) v1.size() << endl;  // 10
     cout << v1.front() << endl; // 0
     cout << v1.back() << endl; // 9
     
@@ -568,13 +656,15 @@ int main(){
     
     // Vector 4 moved from vector 3
     vector<string> v4(std::move(v3);
-    printv(v4) // ab ab ab ab ab
+    printv(v4); // ab ab ab ab ab
     
     return 0;
 }
 ```
+
 ##### List
-List is like a vector but optimized for rapid insert and delete operations. List don't support random access. ```#include <list>```
+List is like a vector but optimized for rapid insert and delete operations. List don't support random access. ```#include <list>```.
+
 ```c++
 // Template function to print list
 template <typename T>
@@ -626,9 +716,12 @@ int main(){
     return 0;
 }
 ```
+
 Excelent choice for situations where you don't need random access and you'll be inserting and removing a lot of elements.
+
 ##### Pair and tuple
 They are used in places where you want to carry multiple. strongly typed values. In some cases they can be more convinient than a _struct_. ```#include <utility>```
+
 ```c++
 // Template to print the pair
 template <typename T1, typename T2> 
@@ -655,7 +748,9 @@ int main(){
     return 0;
 }
 ```
+
 Tuples can be many different sizes.
+
 ```c++
 // print element of the tuple 
 void print3tuple(T t){
@@ -670,8 +765,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Array
 It is a fixed-size sequence container. The size of the array is defined when the array object is created, and it cannot change during the life if the array. Its elements are guaranteed to be stored in contigous memory locations.```#include <array>```
+
 ```c++
 //print elements of the array
 template <typename T, size_t N>
@@ -700,8 +797,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Deque 
-It is  double-ended queue. It is optimized for rapid push and pop from its ends. It is most often uses as the default container for queues and stacks. ```#include <deque>```
+It is  double-ended queue. It is optimized for rapid push and pop from its ends. It is most often uses as the default container for queues and stacks. ```#include <deque>```.
+
 ```c++
 // print deque 
 template <typename T> 
@@ -722,6 +821,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Queue 
 First in, first out. ```#include <queue>```. It uses an underlying container, the default is _deque_.
 
@@ -757,8 +857,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Stack
 Last in, first out. Like the _queue_, its underlying container is a _deque_. ```#include <stack>```.
+
 ```c++
 template <typename T>
 void reportstk(T &stk){
@@ -786,8 +888,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Set
-It holds a sorted set of elements. The _set_ class holds only unique elements where _multisets_ class allows duplicates. _unordered_set_doesn't sort elements and instead provides hashed keys for faster access. ```#include <set>```, ```#include <unordered_set>```.
+It holds a sorted set of elements. The _set_ class holds only unique elements where _multisets_ class allows duplicates. _unordered_set_ doesn't sort elements and instead provides hashed keys for faster access. ```#include <set>```, ```#include <unordered_set>```.
+
 ```c++
 // print elements of the set 
 template <typename T>
@@ -839,6 +943,7 @@ Sets are usefil in cases where you need an ordered set of objects that you can s
 
 ##### Map
 It provides a sorted set of key-value pairs. ```#include <map>```.
+
 ```c++
 // print pair
 tempĺate <typename T1, typename T2>
@@ -879,9 +984,12 @@ int main(){
    return 0; 
 }
 ```
+
 _map_ doesn't accept duplicates. _multimap_ does.
-# STL Iterators 
+
+# STL iterators 
 An iterator is an STL object that can iterate through the elements of a container. It acts a lot like a pointer. It can be incremented and de-referenced as if it were a pointer.```#include <iterator>```. Example:
+
 ```c++
 int main(){
     vector <int> v1 = {1, 2, 3, 4, 5, 6, 7};
@@ -898,6 +1006,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Input iterator
 It is the simplest and most limited form of iterator. It may be used to read values of an object once and then increment. It cannot write. cannot decrease, and cannot read a value twice.  _isotream_ uses an input operator for _cin_.
 ```c++
@@ -925,6 +1034,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Output iterator
 It is the complement of the input operator. It may be used to write a value once and then increment.
 ```c++
@@ -937,6 +1047,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Forward iterator
 It is like a combination of input and output iterators with a few other capabilities. The _forward_list_ is a sinle linked list type. 
 ```c++
@@ -951,6 +1062,7 @@ int main(){
     cout << endl;
 }
 ```
+
 ##### Bidirectional iterator 
 It may be used to access the sequence of a container in either direction. _set_ uses this iterator. 
 ```c++
@@ -978,6 +1090,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Random access iterator
 It is the most complete of all. It may be used to access any element at any position in a container. It offers all of the functionality of a C pointer.
 ```c++
@@ -1007,14 +1120,17 @@ int main(){
     return 0;
 }
 ```
+
 # Transformations
 ```#include <algorithm>```
+
 ##### Transform function
 It is used to run bulk transformations on elements in a container.```transform``` takes four arguments: 
 - Starting point iterator, it is an input operator.
 - Input operator for the endpoint of the source container.
 - Begin point of the destination container. It is an otput operator.
 - An object operator. It is a unary function, so it's a pointer to either a function or object functor that takes one argument.
+
 ```c++
 template <typename T>
 class accum { // accumulates value
@@ -1046,6 +1162,7 @@ int main(){
 
 ##### Lambda transformation
 You may also use a lambda function in place of the functor in your transformation.
+
 ```c++
 template <typename T>
 void disp_v (vector<T> &v){
@@ -1073,6 +1190,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Transforming strings
 It is a special case, because strings are not containers.
 ```c++
@@ -1085,8 +1203,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Binary transformation
 The _transform_ functiuon has another form which uses a binary operator. It takes two operands and allows the results to be sent to a third container.
+
 ```c++
 template <typename T>
 class embiggen{
@@ -1106,10 +1226,13 @@ int main(){
     disp_v(v3); // 5 100 4500 360000 45000000
 }
 ```
+
 # Functors
 A _functor_ is simple a class with an operator overload for the function called ```operator```.
+
 ##### Arithmetic functors.
-They are standard template functor defined in ```#include <functional>```
+They are standard template functor defined in ```#include <functional>```.
+
 ```c++
 int main(){
     vector <long> v1 = {26, 52, 79, 114, 183};
@@ -1124,7 +1247,9 @@ int main(){
     return 0;
 }
 ```
+
 ##### Relational functors
+
 ```c++
 template <typename T>
 void disp_v(vector<T> &v){
@@ -1149,8 +1274,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Logical functors
 Useful for simple applications.
+
 ```c++
 int main(){
     vector<bool> v1 = {1, 0, 1, 0, 1, 0};
@@ -1163,8 +1290,10 @@ int main(){
     disp_v(v3); // 1 0 1 0 0 0
 }
 ```
-# STL Algorithm
-The functions are varied. ```#include <algorithm```
+
+# STL algorithms
+The functions are varied. ```#include <algorithm```.
+
 ##### Testing conditions
 Testing on ranges of elements. These conditional algorithms use a predictive function. They can be handy for testing a range of values in a container, Example.
 ```c++
@@ -1199,8 +1328,10 @@ int main(){
     return 0;
 }
 ```
+
 ##### Searching and counting
 The find function does a sequential search using the equal to comparison. If the value is found, it returns an iterator pointing to that value. The find_if uses an unary function.
+
 ```c++
 // unary function is_odd
 template <typename T> 
@@ -1232,7 +1363,9 @@ int main(){
     return 0;
 }
 ```
+
 ##### Replacing and removing
+
 ```c++
 int main(){
     vector <int> v1 = {2, 3, 7, 5, 7, 11, 13, 17, 19};
@@ -1252,6 +1385,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Modifying algorithms
 Make changes to sequences.
 - _copy_ makes a copy of the source range to the target.
@@ -1275,6 +1409,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Partitions 
 This functions rearrange a container, so the elements that meet a criteria are at the beginning.
 ```c++
@@ -1290,6 +1425,7 @@ int main(){
     print_v(v1); //23 29 41 37 31 19 17 13 11 
 }
 ```
+
 ##### Sorting
 The _sort_ function when working with floats return them in any order. Example 3.73 3.23 3.3. So, to fix this you can use _stable_sort_ which returns them in the correct order. Example 3.23 3.3 3.73.
 ```c++
@@ -1303,6 +1439,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Merging sequences. 
 The merge function is used to merge sorted sequences into one sorted sequence.
 ```c++
@@ -1316,6 +1453,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Binary search
 Binary search function perfoms a classic binary search on a sroted container.
 ```c++
@@ -1344,7 +1482,7 @@ int main(){
 }
 ```
 
-# Deeper understanding of pointers
+# More about pointers
 A pointer is a variable that stores an address location. They are used because the pointer notation is faster when working with arrays, they provide functions access to large blocks of data, and they can allocate memory dinamically. When it is not initilized, it is set to NULL.
 ```c++
 int main(){
@@ -1357,14 +1495,16 @@ int main(){
 The address represents the location of the data in memory (hexadecimal number). The pointer contains the address value (It actually contains a hexadecimal number).
 
 **Memory allocation**
-| Data type        | Memory allocated   |
-| -------------    |:-------------:| 
-| char, bool       | 1 byte  | 
-| short            | 2 bytes | 
-| int, long, float | 4 bytes |
-| double           | 8 bytes |
+
+| Data type        | Memory allocated |
+| ---------------- |:----------------:| 
+| char, bool       | 1 byte           | 
+| short            | 2 bytes          | 
+| int, long, float | 4 bytes          |
+| double           | 8 bytes          |
 
 Use  ``` sizeof(bool) ``` with all data types to confirm its memory allocated. The size of a pointer is four bytes because it is just an address which is an hexadeciaml value. 
+
 ##### Pointer to arrays
 ```c++
 int main(){
@@ -1374,6 +1514,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Character pointers 
 These pointers are a little different than numeric pointers. Most of the time the character pointer is used to point to a string literal, therefore, we must cast.
 ```c++
@@ -1385,9 +1526,11 @@ int main(){
 }
 ```
 The string literal is stored automatically as a null terminated string literal. This means that a null character is added automatically to the character array as the last character.
-As strings are mutable, it is good practice to set the pointer as a constant pointer, so the pointer will be mutable as well. ```const char* myString{"Hello world"}```
+As strings are mutable, it is good practice to set the pointer as a constant pointer, so the pointer will be mutable as well. ```const char* myString{"Hello world"}```.
+
 ##### Dereferencing pointers 
 Applying the indirection operator ```*``` to a pointer accesses the contents of the memory location to which it points. The name indirection operator stens from the fact that the data is being accessed indirectly. 
+
 ```c++
 int main(){
     double testScores[5], sum = 0;
@@ -1400,6 +1543,7 @@ int main(){
     return 0;
 }
 ```
+
 ##### Pointers pointing to Pointers
 ```c++
 /*
@@ -1414,6 +1558,7 @@ for(int i = 0; i < 5; ++i){
     cout << **(pointerArray + i) << endl;
 }
 ```
+
 ##### Dynamic memory allocation
 It is allocation the memory required to store the data you're working with at run time, rather than having the amount of memory predefined when the program is compiled. Dynamic memory is identified by its address, and this is why pointers are used to store this information. Two problems can happen when using dynamic memory: memory leaks and memory fragmentation. The ```new``` operator is used for dynamic memory. Its complement is ```delete```, it releases the space.
 ```c++
@@ -1443,6 +1588,7 @@ cout << "$" << average << endl;
     return 0;
 }
 ```
+
 ##### Stack and Heap
 Memory is divided into stack and heap. Variables created at compile time are stored in the stack as well as function arguments and the _return_ loation. The stack has a fixed size determined by your computer. When variable is no longer used the stack is released.
 Memory not used by the OS or program is called the heap. It represents unused memory of the program, and can be used to allocate the memory dynamically when the program runs. 
